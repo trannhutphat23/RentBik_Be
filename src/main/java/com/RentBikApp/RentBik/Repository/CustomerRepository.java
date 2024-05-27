@@ -14,15 +14,15 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     boolean existsByPhoneNumber(String phoneNumber);
     @Query(nativeQuery = true,
             value = "SELECT t1.*, t3.rank " +
-                    "FROM public.customer t1 " +
-                    "INNER JOIN public.customer_gplx t2 ON t1.id = t2.customer_id " +
-                    "INNER JOIN public.gplx t3 ON t2.gplx_id = t3.id " +
+                    "FROM customer t1 " +
+                    "INNER JOIN customer_gplx t2 ON t1.id = t2.customer_id " +
+                    "INNER JOIN gplx t3 ON t2.gplx_id = t3.id " +
                     "WHERE (t1.cccd ILIKE %:cccd%)" +
                     "LIMIT 1"
     )
     Customer findAllByCccdContaining(String cccd);
     @Query(nativeQuery = true,
-        value = "SELECT t1.*, t3.rank FROM public.customer t1 " +
+        value = "SELECT t1.*, t3.rank FROM customer t1 " +
                 "INNER JOIN customer_gplx t2 ON t1.id = t2.customer_id " +
                 "INNER JOIN gplx t3 ON t2.gplx_id = t3.id " +
                 "WHERE t1.cccd ILIKE %:keyword% " +
@@ -36,7 +36,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
     @Query(nativeQuery = true,
             value = "SELECT * " +
-                    "FROM public.CUSTOMER " +
+                    "FROM CUSTOMER " +
                     "WHERE cccd = %:cccd% ")
     Customer findByCCCD(String cccd);
 
@@ -45,13 +45,13 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
                     "COUNT(DISTINCT CASE WHEN t2.rent_status = 'Dang thue' THEN t2.id END) AS dang_thue_count, " +
                     "COUNT(DISTINCT CASE WHEN t2.rent_status = 'Da thanh toan' THEN t2.id END) AS da_thanh_toan_count, " +
                     "COALESCE(SUM(t3.tong), 0) AS total_sum " +
-                    "FROM public.CUSTOMER t1 " +
-                    "LEFT JOIN public.RENT t2 ON t1.id = t2.customer_id " +
+                    "FROM CUSTOMER t1 " +
+                    "LEFT JOIN RENT t2 ON t1.id = t2.customer_id " +
                     "LEFT JOIN ( " +
                     "SELECT rent_id, SUM(tong_tien) AS tong " +
                     "FROM ( " +
                     "SELECT rent_id, COUNT(*) AS rent_count, COALESCE(SUM(total), 0) AS tong_tien " +
-                    "FROM public.RETURN_CARD " +
+                    "FROM RETURN_CARD " +
                     "GROUP BY rent_id " +
                     ") " +
                     "GROUP BY rent_id " +

@@ -16,9 +16,9 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
     boolean existsByLicensePlate(String licensePlate);
     @Query(nativeQuery = true,
             value = "SELECT t1.*, t3.name, t2.name " +
-                    "FROM public.car t1 " +
-                    "INNER JOIN public.series t2 ON t1.series_id = t2.id " +
-                    "INNER JOIN public.type t3 ON t1.type_id = t3.id " +
+                    "FROM car t1 " +
+                    "INNER JOIN series t2 ON t1.series_id = t2.id " +
+                    "INNER JOIN type t3 ON t1.type_id = t3.id " +
                     "WHERE (license_plate ILIKE %:keyword% OR car_note ILIKE %:keyword% OR status ILIKE %:keyword% OR t2.name ILIKE %:keyword% OR t3.name ILIKE %:keyword%) " +
                     "ORDER BY t1.id ASC"
     )
@@ -26,51 +26,51 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
 
     @Query(nativeQuery = true,
             value = "SELECT t1.*, t3.name, t2.name " +
-                    "FROM public.car t1 " +
-                    "INNER JOIN public.series t2 ON t1.series_id = t2.id " +
-                    "INNER JOIN public.type t3 ON t1.type_id = t3.id " +
+                    "FROM car t1 " +
+                    "INNER JOIN series t2 ON t1.series_id = t2.id " +
+                    "INNER JOIN type t3 ON t1.type_id = t3.id " +
                     "WHERE t1.status = 'Co san' AND (license_plate ILIKE %:keyword% OR t2.name ILIKE %:keyword% OR t3.name ILIKE %:keyword%) " +
                     "ORDER BY t1.id ASC")
     List<Car> searchCarsAvailable(String keyword);
 
     @Query(nativeQuery = true,
-            value = "SELECT * FROM public.CAR " +
+            value = "SELECT * FROM CAR " +
                     "WHERE insurance_id IS NULL ")
     List<Car> findCarHaveInsuranceNull();
 
     @Query(nativeQuery = true,
             value = "SELECT * " +
-                    "FROM public.CAR " +
+                    "FROM CAR " +
                     "WHERE status = 'Co san' " +
                     "ORDER BY id ASC")
     List<Car> findCarAvailable();
     @Modifying
     @Transactional
     @Query(nativeQuery = true,
-            value = "UPDATE public.CAR " +
+            value = "UPDATE CAR " +
                     "SET insurance_id = %:insuranceId% " +
                     "WHERE id = %:carId% ")
     void addNewInsurance(Integer carId, Integer insuranceId);
 
     @Query(nativeQuery = true,
           value = "SELECT * " +
-                  "FROM public.CAR " +
+                  "FROM CAR " +
                   "WHERE license_plate = %:bsx%")
     Car findByBsx(String bsx);
 
     @Query(nativeQuery = true,
             value = "SELECT t1.id, t1.license_plate, t4.mabh, t3.name as type_car, t2.name as series_car, " +
                     "COALESCE(t5.rent_count, 0) AS rent_count, COALESCE(t6.return_count, 0) AS return_count, COALESCE(t6.tong, 0) AS tong " +
-                    "FROM public.CAR t1 " +
-                    "INNER JOIN public.SERIES t2 ON t1.series_id = t2.id " +
-                    "INNER JOIN public.TYPE t3 ON t1.type_id = t3.id " +
-                    "LEFT JOIN public.INSURANCE t4 ON t1.insurance_id = t4.id " +
-                    "LEFT JOIN (SELECT car_id, COUNT(*) AS rent_count FROM public.RENT GROUP BY car_id) t5 ON t1.id = t5.car_id " +
+                    "FROM CAR t1 " +
+                    "INNER JOIN SERIES t2 ON t1.series_id = t2.id " +
+                    "INNER JOIN TYPE t3 ON t1.type_id = t3.id " +
+                    "LEFT JOIN INSURANCE t4 ON t1.insurance_id = t4.id " +
+                    "LEFT JOIN (SELECT car_id, COUNT(*) AS rent_count FROM RENT GROUP BY car_id) t5 ON t1.id = t5.car_id " +
                     "LEFT JOIN ( " +
                     "SELECT car_id, COUNT(rent_id) AS return_count, SUM(tong_tien) AS tong " +
                     "FROM ( " +
                     "SELECT car_id, rent_id, COUNT(*) AS rent_count, COALESCE(SUM(total), 0) AS tong_tien " +
-                    "FROM public.RENT " +
+                    "FROM RENT " +
                     "LEFT JOIN return_card ON rent.id = return_card.rent_id " +
                     "GROUP BY car_id, rent_id " +
                     ") AS subquery " +

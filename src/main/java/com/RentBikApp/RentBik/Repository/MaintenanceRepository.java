@@ -14,8 +14,8 @@ public interface MaintenanceRepository extends JpaRepository<Maintenance, Intege
 //    boolean existsById(Integer id);
     @Query(nativeQuery = true,
             value = "SELECT t1.*, t2.license_plate " +
-                    "FROM public.maintenance t1 " +
-                    "INNER JOIN public.car t2 ON t1.car_id = t2.id " +
+                    "FROM maintenance t1 " +
+                    "INNER JOIN car t2 ON t1.car_id = t2.id " +
                     "WHERE (license_plate ILIKE %:keyword% OR maintenance_note ILIKE %:keyword% OR t1.status ILIKE %:keyword%)")
     List<Maintenance> findByKeywordContainingIgnoreCase(String keyword);
 
